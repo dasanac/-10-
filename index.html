@@ -40,7 +40,7 @@
 <footer>일정은 이 기기의 이 브라우저에만 저장됩니다. 고객 · 환자 · 학생의 실명이나 연락처는 적지 마세요.</footer>
 <div class="toast" role="status" id="toast" hidden></div>
 <dialog id="deleteDialog" aria-labelledby="deleteHeading"><h2 id="deleteHeading">일정을 삭제할까요?</h2><p id="deleteName"></p><p>삭제한 일정은 복구할 수 없습니다.</p><div class="dialog-actions"><button type="button" id="cancelDelete">취소</button><button type="button" class="primary" id="confirmDelete">삭제</button></div></dialog>
-<dialog id="shareDialog" aria-labelledby="shareHeading"><h2 id="shareHeading">앱 공유 · 온라인 게시</h2><p>앱 파일을 카카오톡이나 이메일로 전달할 수 있습니다. 받는 분은 파일을 저장한 뒤 열면 됩니다.</p><p><strong>직접 입력한 일정과 메모는 공유 파일에 포함되지 않습니다.</strong> 처음 제공된 예시 일정만 포함됩니다.</p><div class="share-options"><button type="button" class="primary" id="nativeShare">앱 파일 공유하기</button><button type="button" id="downloadApp">온라인 게시용 index.html 저장</button></div><p class="share-status" id="shareStatus" role="status"></p><h3>웹 주소로 온라인에 게시하려면</h3><p>저장한 index.html을 이용 중인 웹 호스팅에 업로드한 뒤, 발급된 공개 주소를 전달하세요. 이 버튼만으로 온라인에 자동 게시되지는 않습니다. 각 사용자의 일정은 각자의 브라우저에 저장됩니다.</p><div class="dialog-actions"><button type="button" id="closeShare">닫기</button></div></dialog>
+<dialog id="shareDialog" aria-labelledby="shareHeading"><h2 id="shareHeading">앱 공유 · 온라인 게시</h2><p>앱 파일을 카카오톡이나 이메일로 전달할 수 있습니다. 받는 분은 파일을 저장한 뒤 열면 됩니다.</p><p><strong>직접 입력한 일정과 메모는 공유 파일에 포함되지 않습니다.</strong> 처음 제공된 예시 일정만 포함됩니다.</p><div class="share-options"><button type="button" class="primary" id="nativeShare">앱 파일 공유하기</button><button type="button" id="downloadApp">온라인 게시용 index.html 저장</button></div><p class="share-status" id="shareStatus" role="status"></p><h3>웹 주소로 온라인에 게시하려면</h3><p>상단의 공유 링크 복사 버튼으로 GitHub Pages 주소를 전달하세요. 파일을 직접 전달하려면 앱 파일 공유하기 또는 index.html 저장을 이용하세요. 각 사용자의 일정은 각자의 브라우저에 저장됩니다.</p><div class="dialog-actions"><button type="button" id="closeShare">닫기</button></div></dialog>
 <script>
 'use strict';
 const STORAGE_KEY='dasan-work-planner-v1';
@@ -94,7 +94,7 @@ $('cancelEdit').addEventListener('click',resetForm);$('jumpAdd').addEventListene
 let lastToday=todayKey();setInterval(()=>{const current=todayKey();if(current!==lastToday){if(weekStart===monday(lastToday))weekStart=monday(current);lastToday=current;render();}},30000);
 window.addEventListener('storage',event=>{if(event.key===STORAGE_KEY&&!editingId){try{const data=JSON.parse(event.newValue);if(Array.isArray(data)&&data.every(validEvent)){events=data;render();notify('다른 창의 변경 내용을 반영했습니다.');}}catch(error){/* Keep current data when another window writes invalid data. */}}});
 const PUBLIC_APP_URL='https://dasanac.github.io/-10-/';
-const ONLINE_PUBLISHED=location.protocol==='https:'&&location.hostname==='dasanac.github.io';
+const ONLINE_PUBLISHED=true;
 $('copyShareLink').addEventListener('click',async()=>{if(!ONLINE_PUBLISHED){notify('온라인 게시가 완료되면 공유 링크를 복사할 수 있습니다.');return;}try{if(!navigator.clipboard||!window.isSecureContext)throw new Error('manual');await navigator.clipboard.writeText(PUBLIC_APP_URL);notify('공유 링크를 복사했습니다. 카카오톡이나 이메일에 붙여넣으세요.');}catch(error){$('shareDialog').showModal();$('shareStatus').replaceChildren();const label=document.createElement('label');label.textContent='아래 링크를 선택해 복사해 주세요.';label.htmlFor='publicShareUrl';const input=document.createElement('input');input.id='publicShareUrl';input.readOnly=true;input.value=PUBLIC_APP_URL;$('shareStatus').append(label,input);input.focus();input.select();}});
 function shareFile(){
 const copy=document.documentElement.cloneNode(true);
